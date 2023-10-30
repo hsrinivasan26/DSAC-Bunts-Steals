@@ -7,10 +7,9 @@ for l in lines:
         currentline = l.split(',')
         currentline[6] = currentline[6][:-1]
         plays.append(currentline)
-
 innings = []
 inning = []
-for i in range(100):
+for i in range(len(plays)):
     if i == 0:
         current_inning = '1'
         current_half = '0'
@@ -22,8 +21,9 @@ for i in range(100):
     else:
         innings.append(inning)
         inning = []
+        inning.append(plays[i])
 
-print(innings[2])
+print(innings[18])
 
 def get_ob_states(inning):
     bases = [0, 0, 0]
@@ -36,6 +36,8 @@ def get_ob_states(inning):
             bases[1] = 0
         if "3-" in info:
             bases[2] = 0
+        if "-1" in info:
+            bases[0] = 1
         if "-2" in info:
             bases[1] = 1
         if "-3" in info:
@@ -54,7 +56,7 @@ def get_ob_states(inning):
         
         
     
-get_ob_states(innings[2])
+get_ob_states(innings[18])
 
     
     
