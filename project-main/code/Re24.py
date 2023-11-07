@@ -44,7 +44,7 @@ def get_ob_states(inning):
             bases[2] = 1
         if "-H" in info:
             runs += 1
-        if info[0] in ["S", "W"] or info[:2] == "HP":
+        if info[0] in ["S", "W"] or info[:2] in ["HP", "IW"]:
             bases[0] = 1
         elif info[0] == "D":
             bases[1] = 1
