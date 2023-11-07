@@ -1,4 +1,4 @@
-filename = "events/2007BAL.EVA"
+filename = "events/2004BOS.EVA"
 f = open(filename, 'r')
 lines = f.readlines()
 plays = []
@@ -53,7 +53,7 @@ def get_ob_states(inning):
         elif info[:2] == "HR":
             runs += 1
         elif info[:2] in ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'SB', 'NP', 'PB', 'IW']:
-            continue
+            bases[0] = bases[0]
         else:
             outs += 1
         if "CS" in info:
@@ -103,7 +103,10 @@ def get_ob_states(inning):
                 if fielders[-5] == '5':
                     bases[2] = 0
             if "LDP" in info or "FDP" in info:
-                bases[eval(baserunners[4]) - 1] = 0
+                try:
+                    bases[eval(baserunners[4]) - 1] = 0
+                except IndexError:
+                    bases[0] = bases[0]
                 
             
             
