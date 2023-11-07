@@ -1,28 +1,31 @@
-filename = "events/2004BOS.EVA"
-f = open(filename, 'r')
-lines = f.readlines()
-plays = []
-for l in lines:
-    if l[:4] == 'play':
-        currentline = l.split(',')
-        currentline[6] = currentline[6][:-1]
-        plays.append(currentline)
-innings = []
-inning = []
-for i in range(len(plays)):
-    if i == 0:
-        current_inning = '1'
-        current_half = '0'
-    else:
-        current_inning = plays[i-1][1]
-        current_half = plays[i-1][2]
-    if plays[i][1] == current_inning and plays[i][2] == current_half:
-        inning.append(plays[i])
-    else:
-        innings.append(inning)
-        inning = []
-        inning.append(plays[i])
 
+
+def get_innings(filename):
+    f = open(filename, 'r')
+    lines = f.readlines()
+    plays = []
+    for l in lines:
+        if l[:4] == 'play':
+            currentline = l.split(',')
+            currentline[6] = currentline[6][:-1]
+            plays.append(currentline)
+    innings = []
+    inning = []
+    for i in range(len(plays)):
+        if i == 0:
+            current_inning = '1'
+            current_half = '0'
+        else:
+            current_inning = plays[i-1][1]
+            current_half = plays[i-1][2]
+        if plays[i][1] == current_inning and plays[i][2] == current_half:
+            inning.append(plays[i])
+        else:
+            innings.append(inning)
+            inning = []
+            inning.append(plays[i])
+    return innings
+    
 
 def get_ob_states(inning):
     bases = [0, 0, 0]
@@ -106,18 +109,17 @@ def get_ob_states(inning):
                 try:
                     bases[eval(baserunners[4]) - 1] = 0
                 except IndexError:
-                    bases[0] = bases[0]
-                
-            
-            
-            
-                
+                    bases[0] = bases[0]        
         print([bases, runs, outs])
+
+filename = "events/2004BOS.EVA"
+innings = get_innings(filename)
+for inning in innings:
+    print(inning)
+    get_ob_states(inning)
         
         
     
-for i in range(20, 50):
-    print(innings[i])
-    get_ob_states(innings[i])
+
     
     
