@@ -1,9 +1,9 @@
-filename = "events/2004OAK.EVA"
+filename = "events/2007BAL.EVA"
 f = open(filename, 'r')
 lines = f.readlines()
 plays = []
 for l in lines:
-    if "play" in l:
+    if l[:4] == 'play':
         currentline = l.split(',')
         currentline[6] = currentline[6][:-1]
         plays.append(currentline)
@@ -52,7 +52,7 @@ def get_ob_states(inning):
             bases[2] = 1
         elif info[:2] == "HR":
             runs += 1
-        elif info[:2] in ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'SB', 'NP']:
+        elif info[:2] in ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'SB', 'NP', 'PB', 'IW']:
             continue
         else:
             outs += 1
