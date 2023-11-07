@@ -52,7 +52,7 @@ def get_ob_states(inning):
             bases[2] = 1
         elif info[:2] == "HR":
             runs += 1
-        elif info[:2] in ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9']:
+        elif info[:2] in ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'SB', 'NP']:
             continue
         else:
             outs += 1
@@ -75,7 +75,6 @@ def get_ob_states(inning):
             if info[2] == 3:
                 bases[2] = 0
         if info[:2] == "SB":
-            outs -= 1
             if info[2] == '2':
                 bases[0] = 0
                 bases[1] = 1
@@ -85,8 +84,6 @@ def get_ob_states(inning):
             if info[2] == 'H':
                 bases[2] = 0
                 runs += 1
-        if "NP" in info:
-            outs -= 1
         if "DP" in info:
             outs += 1
             split_line = info.split('/')
