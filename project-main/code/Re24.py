@@ -23,11 +23,11 @@ for i in range(len(plays)):
         inning = []
         inning.append(plays[i])
 
-print(innings[18])
 
 def get_ob_states(inning):
     bases = [0, 0, 0]
     runs = 0
+    outs = 0
     for play in inning:
         info = play[6]
         if "1-"  in info:
@@ -46,17 +46,78 @@ def get_ob_states(inning):
             runs += 1
         if info[0] in ["S", "W"] or info[:2] == "HP":
             bases[0] = 1
-        if info[0] == "D":
+        elif info[0] == "D":
             bases[1] = 1
-        if info[0] == "T":
+        elif info[0] == "T":
             bases[2] = 1
-        if info[:2] == "HR":
+        elif info[:2] == "HR":
             runs += 1
-        print([bases, runs])
+        elif info[:2] in ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9']:
+            continue
+        else:
+            outs += 1
+        if "CS" in info:
+            if "POCS" in info:
+                margin = 4
+            else:
+                margin = 2
+            if info[margin] == '2':
+                bases[0] = 0
+            if info[margin] == '3':
+                bases[1] = 0
+            if info[margin] == 'H':
+                bases[2] = 0
+        if "PO" in info and "CS" not in info:
+            if info[2] == 1:
+                bases[0] = 0
+            if info[2] == 2:
+                bases[1] = 0
+            if info[2] == 3:
+                bases[2] = 0
+        if info[:2] == "SB":
+            outs -= 1
+            if info[2] == '2':
+                bases[0] = 0
+                bases[1] = 1
+            if info[2] == '3':
+                bases[1] = 0
+                bases[2] = 1
+            if info[2] == 'H':
+                bases[2] = 0
+                runs += 1
+        if "NP" in info:
+            outs -= 1
+        if "DP" in info:
+            outs += 1
+            split_line = info.split('/')
+            fielders = split_line[0]
+            baserunners = split_line[1]
+            if "GDP" in info:
+                if fielders[-1] == '3':
+                    bases[0] = 0
+                if fielders[-1] in ['4', '6']:
+                    bases[1] = 0
+                if fielders[-1] == '5':
+                    bases[2] = 0
+                if fielders[-5] == '3':
+                    bases[0] = 0
+                if fielders[-5] in ['4', '6']:
+                    bases[1] = 0
+                if fielders[-5] == '5':
+                    bases[2] = 0
+            if "LDP" in info or "FDP" in info:
+                bases[eval(baserunners[4]) - 1] = 0
+                
+            
+            
+            
+                
+        print([bases, runs, outs])
         
         
     
-get_ob_states(innings[18])
-
+for i in range(20, 50):
+    print(innings[i])
+    get_ob_states(innings[i])
     
     
