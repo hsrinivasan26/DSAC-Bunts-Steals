@@ -1,14 +1,14 @@
 
-
 def get_innings(filename):
     f = open(filename, 'r')
     lines = f.readlines()
     plays = []
     for l in lines:
         if l[:4] == 'play':
-            currentline = l.split(',')
-            currentline[6] = currentline[6][:-1]
-            plays.append(currentline)
+            if 'NP' not in l[-3:]:
+                currentline = l.split(',')
+                currentline[6] = currentline[6][:-1]
+                plays.append(currentline)
     innings = []
     inning = []
     for i in range(len(plays)):
@@ -112,14 +112,9 @@ def get_ob_states(inning):
                     bases[0] = bases[0]        
         print([bases, runs, outs])
 
-filename = "events/2004BOS.EVA"
+filename = "events/2022ARI.EVN"
 innings = get_innings(filename)
 for inning in innings:
     print(inning)
     get_ob_states(inning)
-        
-        
-    
-
-    
     
