@@ -27,10 +27,13 @@ def get_innings(filename):
     return innings
     
 
-def get_ob_states(inning):
+def get_ob_states(inning, lst):
     bases = [0, 0, 0]
     runs = 0
     outs = 0
+    print([bases, runs, outs])
+    lst.append([bases, runs, outs])
+    print(lst[-1])
     for play in inning:
         info = play[6]
         if "1-"  in info:
@@ -111,10 +114,13 @@ def get_ob_states(inning):
                 except IndexError:
                     bases[0] = bases[0]        
         print([bases, runs, outs])
+        lst.append([bases, runs, outs])
+        print(lst[-1])
 
 filename = "events/2022ARI.EVN"
 innings = get_innings(filename)
+lst = []
 for inning in innings:
     print(inning)
-    get_ob_states(inning)
+    get_ob_states(inning, lst)
     
