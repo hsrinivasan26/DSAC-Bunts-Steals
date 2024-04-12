@@ -1,8 +1,7 @@
+
 matrix_dict = {
-    '0000': [0, 0],
     '0001': [0, 0],
     '0002': [0, 0],
-    '0003': [0, 0],
     '0010': [0, 0],
     '0011': [0, 0],
     '0012': [0, 0],
@@ -10,27 +9,21 @@ matrix_dict = {
     '0100': [0, 0],
     '0101': [0, 0],
     '0102': [0, 0],
-    '0103': [0, 0],
     '1000': [0, 0],
     '1001': [0, 0],
     '1002': [0, 0],
-    '1003': [0, 0],
     '0110': [0, 0],
     '0111': [0, 0],
     '0112': [0, 0],
-    '0113': [0, 0],
     '1010': [0, 0],
     '1011': [0, 0],
     '1012': [0, 0],
-    '1013': [0, 0],
     '1100': [0, 0],
     '1101': [0, 0],
     '1102': [0, 0],
-    '1103': [0, 0],
     '1110': [0, 0],
     '1111': [0, 0],
     '1112': [0, 0],
-    '1113': [0, 0]
 }
 print(matrix_dict)
 
@@ -233,11 +226,22 @@ def get_ob_states(inning):
                     bases[0] = bases[0]
 
                     #end of loop two
-            play_key = ''.join(str(num) for num in bases)+str(outs)
+        play_key = ''.join(str(num) for num in bases)+str(outs)
+        #print(play_key)
+        print([bases, totalruns-runs, outs])
+
+        '''if (play_key[0] == 4):
+            print(inning)
+            print("hello")
+            '''
+        try:
             matrix_dict[play_key][0]+=1
-            matrix_dict[play_key][o]+=outs
+            matrix_dict[play_key][1]+=totalruns-runs
+
+        except:
+            continue
+        matrix_dict[play_key][1]+=totalruns-runs
             
-        #print([bases, totalruns-runs, outs])
         
 
 
