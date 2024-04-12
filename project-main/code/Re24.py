@@ -225,8 +225,11 @@ def get_ob_states(inning):
                     bases[0] = bases[0]
 
                     #end of loop two
-
-        print([bases, totalruns-runs, outs])
+            play_key = ''.join(str(num) for num in bases)+str(outs)
+            matrix_dict[play_key][0]+=1
+            matrix_dict[play_key][o]+=outs
+            
+        #print([bases, totalruns-runs, outs])
         
 
 
@@ -235,4 +238,5 @@ innings = get_innings(filename)
 for inning in innings:
     print(inning)
     get_ob_states(inning)
+print(matrix_dict)
     
