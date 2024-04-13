@@ -1,4 +1,5 @@
 
+import os
 matrix_dict = {
     '0001': [0, 0],
     '0002': [0, 0],
@@ -244,11 +245,16 @@ def get_ob_states(inning):
             
         
 
+for filename in os.listdir("events"):
+    path = "events/" + filename
+    innings = get_innings(path)
+    for inning in innings:
+        print(inning)
+        try:
+            get_ob_states(inning)
+        except:
+            continue
 
-filename = "events/2022ARI.EVN"
-innings = get_innings(filename)
-for inning in innings:
-    print(inning)
-    get_ob_states(inning)
 print(matrix_dict)
-    
+ 
+ 
