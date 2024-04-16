@@ -20,8 +20,7 @@ def get_ob_states(inning):
             bases[1] = 1
         if "-3" in info:
             bases[2] = 1
-        if "-H" in info:
-            runs += 1
+        runs += info.count("-H")
         if info[0] in ["S", "W"] or info[:2] in ["HP", "IW"]:
             bases[0] = 1
         elif info[0] == "D":
@@ -105,8 +104,7 @@ def get_ob_states(inning):
             bases[1] = 1
         if "-3" in info:
             bases[2] = 1
-        if "-H" in info:
-            runs += 1
+        runs += info.count("-H")
         if info[0] in ["S", "W"] or info[:2] in ["HP", "IW"]:
             bases[0] = 1
         elif info[0] == "D":
@@ -172,7 +170,7 @@ def get_ob_states(inning):
                     bases[0] = bases[0]
 
                     #end of loop two
-        print(bases,runs,outs)
+        print(bases,totalruns-runs,outs)
 
 
 get_ob_states(inning1)
