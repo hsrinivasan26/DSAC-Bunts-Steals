@@ -1,0 +1,209 @@
+
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+def get_innings(filename):
+    f = open(filename, 'r')
+    lines = f.readlines()
+    plays = []
+    for l in lines:
+        if l[:4] == 'play':
+            if 'NP' not in l[-3:]:
+                currentline = l.split(',')
+                currentline[6] = currentline[6][:-1]
+                plays.append(currentline)
+    innings = []
+    inning = []
+    for i in range(len(plays)):
+        if i == 0:
+            current_inning = '1'
+            current_half = '0'
+        else:
+            current_inning = plays[i-1][1]
+            current_half = plays[i-1][2]
+        if plays[i][1] == current_inning and plays[i][2] == current_half:
+            inning.append(plays[i])
+        else:
+            innings.append(inning)
+            inning = []
+            inning.append(plays[i])
+    return innings
+    
+
+
+def runcounter(inning):
+    totalruns = 0
+    for play in inning:
+        info = play[6]
+        totalruns+=info.count("-H")
+        if "HR" in info:
+            totalruns+=1
+    return totalruns
+
+
+def get_ob_states(inning,totalruns,matrix_dict):
+    bases = [0, 0, 0]
+    runs = 0
+    outs = 0
+    for play in inning:
+        info = play[6]
+        if "1-"  in info:
+            bases[0] = 0
+        if "2-" in info:
+            bases[1] = 0
+        if "3-" in info:
+            bases[2] = 0
+        if "-1" in info:
+            bases[0] = 1
+        if "-2" in info:
+            bases[1] = 1
+        if "-3" in info:
+            bases[2] = 1
+        runs += info.count("-H")
+        if info[0] in ["S", "W"] or info[:2] in ["HP", "IW"]:
+            bases[0] = 1
+        elif info[0] == "D":
+            bases[1] = 1
+        elif info[0] == "T":
+            bases[2] = 1
+        elif info[:2] == "HR":
+            runs += 1
+        elif info[:2] in ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9', 'SB', 'NP', 'PB', 'IW']:
+            bases[0] = bases[0]
+        else:
+            outs += 1
+        if "CS" in info:
+            if "POCS" in info:
+                margin = 4
+            else:
+                margin = 2
+            if info[margin] == '2':
+                bases[0] = 0
+            if info[margin] == '3':
+                bases[1] = 0
+            if info[margin] == 'H':
+                bases[2] = 0
+        if "PO" in info and "CS" not in info:
+            if info[2] == 1:
+                bases[0] = 0
+            if info[2] == 2:
+                bases[1] = 0
+            if info[2] == 3:
+                bases[2] = 0
+        if info[:2] == "SB":
+            if info[2] == '2':
+                bases[0] = 0
+                bases[1] = 1
+            if info[2] == '3':
+                bases[1] = 0
+                bases[2] = 1
+            if info[2] == 'H':
+                bases[2] = 0
+                runs += 1
+        if "DP" in info:
+            outs += 1
+            split_line = info.split('/')
+            fielders = split_line[0]
+            baserunners = split_line[1]
+            if "GDP" in info:
+                if fielders[-1] == '3':
+                    bases[0] = 0
+                if fielders[-1] in ['4', '6']:
+                    bases[1] = 0
+                if fielders[-1] == '5':
+                    bases[2] = 0
+                if fielders[-5] == '3':
+                    bases[0] = 0
+                if fielders[-5] in ['4', '6']:
+                    bases[1] = 0
+                if fielders[-5] == '5':
+                    bases[2] = 0
+            if "LDP" in info or "FDP" in info:
+                try:
+                    bases[eval(baserunners[4]) - 1] = 0
+                except IndexError:
+                    bases[0] = bases[0]
+
+                    #end of loop two
+
+        play_key = ''.join(str(num) for num in bases)+str(outs)
+        #print(play_key)
+        #print([bases, totalruns-runs, outs])
+
+     
+        try:
+            if totalruns-runs in matrix_dict[play_key]:
+                matrix_dict[play_key][totalruns-runs] +=1
+            else:
+                matrix_dict[play_key][totalruns-runs] = 1
+
+        except:
+            continue
+
+
+
+def propcounter(freq_dict,needed_runs):
+    ret = {}
+    for base_state in freq_dict:
+        total = sum(freq_dict[base_state].values())
+        less = 0
+        current_dict = freq_dict[base_state]
+        for runs in current_dict:
+            if runs<needed_runs:
+                less+=current_dict[runs]
+        ret[base_state] = 1-less/total
+    return ret
+        
+
+
+
+            
+if __name__ == "__main__":
+    '''
+    print("Start")    
+    matrix_dict = {
+        '0000':{},
+        '0001': {},
+        '0002': {},
+        '1000': {},
+        '1001': {},
+        '1002': {},
+        '0100': {},
+        '0101': {},
+        '0102': {},
+        '1100': {},
+        '1101': {},
+        '1102': {},
+        '0010': {},
+        '0011': {},
+        '0012': {},
+        '1010': {},
+        '1011': {},
+        '1012': {},
+        '0110': {},
+        '0111': {},
+        '0112': {},
+        '1110': {},
+        '1111': {},
+        '1112': {},
+    }
+    
+    for filename in os.listdir("events"):
+        path = "events/" + filename
+        innings = get_innings(path)
+        for inning in innings:
+            try:
+                get_ob_states(inning,runcounter(inning),matrix_dict)
+            except:
+                continue
+
+    print(matrix_dict)
+    for string in matrix_dict.keys():
+        plt.bar(list(matrix_dict[string].keys()), matrix_dict[string].values(), color='g')
+        plt.show()
+'''
+    print("hello")
+    dict = {'0000': {0: 34119, 3: 1840, 2: 3716, 1: 7419, 4: 887, 5: 393, 6: 185, 7: 71, 10: 15, 8: 38, 9: 13, 11: 6, 12: 1}, '0001': {0: 609556, 3: 11945, 1: 71771, 2: 29106, 4: 4746, 6: 766, 5: 1941, 7: 256, 8: 91, 9: 42, 11: 10, 10: 18, 13: 3}, '0002': {0: 529918, 3: 3126, 1: 27846, 2: 8902, 4: 1069, 6: 113, 5: 342, 7: 39, 8: 14, 10: 1, 9: 4, 11: 1, -1: 1}, '1000': {0: 141006, 2: 30889, 1: 42380, 3: 15709, 6: 1485, 5: 3421, 4: 7738, 7: 662, 8: 279, 9: 111, 10: 66, 11: 27, 12: 9, -1: 4, 13: 6, 14: 1}, '1001': {1: 34514, 0: 213832, 3: 11149, 2: 25603, 4: 4558, 5: 1904, 6: 726, 7: 298, 9: 49, -1: 53, 8: 109, 10: 21, 11: 4, 12: 2, 13: 1}, '1002': {0: 263325, 1: 18329, 2: 13318, 5: 479, 4: 1545, 3: 4519, 6: 170, 7: 63, -1: 173, 8: 29, 9: 11, 10: 1, 11: 1}, '0100': {0: 27096, 2: 9944, 1: 23995, 3: 5220, 4: 2483, 8: 89, 7: 201, 6: 503, 5: 1118, 11: 13, 10: 19, 12: 5, 9: 40, 14: 1}, '0101': {1: 27857, 0: 70886, 2: 11382, 3: 5268, 4: 2201, 7: 137, 5: 921, 8: 47, 6: 364, 9: 24, 10: 10, 12: 3, 11: 4}, '0102': {3: 2643, 0: 114195, 2: 6882, 1: 21244, 4: 1021, 7: 38, 5: 311, 6: 120, -1: 10, 9: 6, 8: 14, 10: 3}, '1100': {0: 25095, 2: 9918, 1: 15153, 6: 874, 5: 1862, 3: 7654, 4: 4044, 7: 373, 8: 169, 9: 73, 10: 29, 11: 23, 12: 3, 14: 1, -1: 2, 13: 1}, '1101': {0: 69734, 2: 12243, 1: 19712, 3: 9440, 4: 3982, 6: 687, 5: 1720, 7: 250, 8: 102, 9: 45, 10: 20, 11: 7, -1: 10, 13: 3, 12: 1}, '1102': {0: 118687, 1: 16352, 2: 8017, 5: 652, 3: 5901, 4: 2087, 7: 76, 6: 236, -1: 46, 8: 33, 9: 10, 10: 3, 11: 2}, '0010': {1: 4303, 0: 1307, 2: 1188, 5: 156, 4: 345, 3: 684, 7: 22, 6: 80, 9: 10, 10: 6, 8: 11, 12: 1, 11: 1}, '0011': {0: 10847, 1: 15266, 2: 3234, 3: 1559, 6: 119, 5: 262, 4: 691, 7: 36, 8: 12, 9: 7, 11: 3, 10: 5}, '0012': {0: 37340, 2: 2477, 1: 10016, 4: 384, 3: 964, 5: 132, 6: 51, -1: 3, 7: 18, 9: 5, 8: 5, 11: 1}, '1010': {2: 3848, 1: 10065, 3: 2931, 5: 706, 0: 3647, 4: 1495, 7: 150, 8: 78, 6: 359, 9: 31, 12: 3, 10: 23, 13: 1, 11: 2}, '1011': {1: 20795, 2: 6418, 6: 353, 5: 888, 0: 20680, 3: 4535, 4: 2012, 7: 140, 8: 56, 10: 7, 9: 24, 11: 4, 12: 3}, '1012': {0: 55676, 2: 4460, 3: 3059, 1: 11821, 5: 371, 4: 1113, 6: 135, -1: 18, 8: 17, 7: 44, 9: 10, 12: 1, 11: 1, 10: 1}, '0110': {4: 1004, 7: 93, 2: 3845, 1: 3955, 6: 231, 0: 1982, 3: 1794, 5: 498, 8: 49, 11: 9, 12: 2, 9: 26, 10: 10, 13: 2}, '0111': {0: 10962, 1: 9664, 2: 6981, 5: 743, 3: 3050, 4: 1645, 6: 315, 7: 121, 8: 51, 10: 15, 12: 2, 9: 15, 11: 5}, '0112': {0: 28942, 1: 3209, 2: 4961, 5: 305, 4: 800, 6: 112, 3: 1763, 7: 41, 8: 7, 9: 4, -1: 3, 10: 2}, '1110': {1: 4827, 0: 2668, 5: 1022, 3: 2503, 2: 3810, 4: 2099, 6: 520, 7: 253, 9: 48, 10: 25, 8: 113, 11: 12, 12: 2, 13: 1}, '1111': {1: 11213, 2: 7016, 0: 14969, 4: 3514, 3: 4291, 7: 273, 6: 624, 5: 1496, 8: 95, 9: 37, 10: 18, -1: 3, 11: 7, 13: 1}, '1112': {0: 37261, 1: 5368, 2: 6027, 5: 800, 4: 2289, 3: 2918, 7: 102, 6: 260, 8: 29, -1: 8, 10: 3, 9: 19, 11: 1}}
+    print(propcounter(dict,5))
