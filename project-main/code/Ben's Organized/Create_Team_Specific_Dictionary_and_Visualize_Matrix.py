@@ -7,7 +7,7 @@ from primary_functions import get_innings
 from primary_functions import runcounter
 from primary_functions import get_ob_states
 
-def create_teame_matrix():
+def create_team_matrix(team):
     if __name__ == "__main__":
         print("Start")    
         matrix_dict_team = {
@@ -36,12 +36,9 @@ def create_teame_matrix():
             '1111': [0, 0],
             '1112': [0, 0],
         }
-    # Directory where the files are located
     directory = "events"
 
-    team = input("Three letter code for team (example: New York Mets = NYN):")
-
-    # Filter files containing "NYN"
+    # Filter files containing the team code
     files = [file for file in os.listdir(directory) if team in file]
 
     # Iterate through filtered files
@@ -55,30 +52,35 @@ def create_teame_matrix():
                 print(f"Error processing {path}: {e}")
                 continue
 
-    print(matrix_dict_team)
+    return matrix_dict_team
 
 
-matrix = np.zeros((8,3))
+def display_matrix():
+    if __name__ == "__main__":
+        team = input("Three letter code for team (example: New York Mets = NYN): ")
+        matrix_dict_team = create_team_matrix(team)
+        print(matrix_dict_team)
 
-for key, value in matrix_dict_team.items():
-    row = int(key[0:3], 2)
-    col = int(key[3])
-    ratio = value[1] / value[0]
-    matrix[row, col] = ratio
-    print([row,col])
+        for key, value in matrix_dict_team.items():
+            row = int(key[0:3], 2)
+            col = int(key[3])
+            ratio = value[1] / value[0]
+            matrix[row, col] = ratio
+            print([row,col])
 
-print(matrix)
-# Labels for rows and columns
-row_labels = [format(i, '03b') for i in range(8)]
-col_labels = ['0', '1', '2']
 
-# Plot the table
-plt.figure(figsize=(8, 6))
-plt.table(cellText=np.round(matrix, 2),
-          rowLabels=row_labels,
-          colLabels=col_labels,
-          loc='center')
-plt.axis('off')  # Hide axes
-plt.title('Run-expectancy Matrix')
-plt.show()
+        # Labels for rows and columns
+        row_labels = [format(i, '03b') for i in range(8)]
+        col_labels = ['0', '1', '2']
+
+        # Plot the table
+        plt.figure(figsize=(8, 6))
+        plt.table(cellText=np.round(matrix, 2),
+                  rowLabels=row_labels,
+                  colLabels=col_labels,
+                  loc='center')
+        plt.axis('off')  # Hide axes
+        plt.title('Run-expectancy Matrix')
+        plt.show()
+
 ```
