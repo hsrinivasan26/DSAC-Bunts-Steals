@@ -58,7 +58,7 @@ def calculate_steal_probability(base_state, success_prob, matrix_dict):
     return 'Probability of success needed is:', probability
     
 
-def display_probability(matrix_dict):
+def display_probability():
     base_state = input("Enter the current base state (e.g., 1000 for runner on first and no outs): ")
     result = calculate_steal_probability(base_state, success_prob, matrix_dict)
     print(result)
