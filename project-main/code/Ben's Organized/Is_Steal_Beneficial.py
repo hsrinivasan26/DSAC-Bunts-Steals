@@ -1,3 +1,11 @@
+```python
+
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+from primary_functions import get_innings
+from primary_functions import runcounter
+
 def calculate_steal_expected_value(base_state, success_prob, matrix_dict):
     runner_positions = (base_state[:3])
     outs = int(base_state[3])
@@ -60,3 +68,4 @@ success_prob = float(input("Enter the probability of success of the steal (betwe
 result = calculate_steal_expected_value(base_state, success_prob, matrix_dict)
 print(result)
     
+```
