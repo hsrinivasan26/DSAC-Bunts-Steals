@@ -1,3 +1,5 @@
+```python
+
 def calculate_steal_probability(base_state, success_prob, matrix_dict):
     runner_positions = (base_state[:3])
     outs = int(base_state[3])
@@ -55,3 +57,4 @@ base_state = input("Enter the current base state (e.g., 1000 for runner on first
 
 result = calculate_steal_probability(base_state, success_prob, matrix_dict)
 print(result)
+```
