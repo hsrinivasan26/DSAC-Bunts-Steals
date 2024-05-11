@@ -62,10 +62,10 @@ def calculate_steal_expected_value(base_state, success_prob, matrix_dict):
 
     
 
-base_state = input("Enter the current base state (e.g., 1000 for runner on first and no outs): ")
-success_prob = float(input("Enter the probability of success of the steal (between 0 and 1): "))
-
-result = calculate_steal_expected_value(base_state, success_prob, matrix_dict)
-print(result)
+def display_result():
+    base_state = input("Enter the current base state (e.g., 1000 for runner on first and no outs): ")
+    success_prob = float(input("Enter the probability of success of the steal (between 0 and 1): "))
+    result = calculate_steal_expected_value(base_state, success_prob, matrix_dict)
+    print (result)
     
 ```
