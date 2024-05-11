@@ -1,3 +1,11 @@
+```python
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+from primary_functions import get_innings
+from primary_functions import runcounter
+from primary_functions import get_ob_states
+
 # Directory where the files are located
 directory = "events"
 
@@ -44,3 +52,4 @@ plt.table(cellText=np.round(matrix, 2),
 plt.axis('off')  # Hide axes
 plt.title('Run-expectancy Matrix')
 plt.show()
+```
