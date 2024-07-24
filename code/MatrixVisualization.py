@@ -1,6 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from primary_functions import create_matrix
+
+
 matrix = np.zeros((8,3))
+
+matrix_dict = create_matrix()
 
 for key, value in matrix_dict.items():
     row = int(key[0:3], 2)

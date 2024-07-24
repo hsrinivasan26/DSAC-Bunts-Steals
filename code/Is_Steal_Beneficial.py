@@ -1,4 +1,10 @@
-def calculate_steal_probability(base_state, success_prob, matrix_dict):
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+from primary_functions import create_matrix
+
+
+def calculate_steal_expected_value(base_state, success_prob, matrix_dict):
     runner_positions = (base_state[:3])
     outs = int(base_state[3])
     
@@ -47,11 +53,20 @@ def calculate_steal_probability(base_state, success_prob, matrix_dict):
     original_value = matrix_dict[base_state]
     original_runs = original_value[1]/original_value[0]
 
-    probability = (original_runs - failed_runs) / (success_runs - failed_runs)
-    return 'Probability of success needed is:', probability
+    expected_runs = success_runs*success_prob + failed_runs*(1-success_prob)
+    diff = expected_runs-original_runs
+
+    if diff>0:
+        return f"This steal is beneficial, you gain {diff} expected runs"
+    else: return f"This steal is not beneficial, you lost {-diff} expected runs"
+
     
 
-base_state = input("Enter the current base state (e.g., 1000 for runner on first and no outs): ")
-
-result = calculate_steal_probability(base_state, success_prob, matrix_dict)
-print(result)
+def display_result():
+    base_state = input("Enter the current base state (e.g., 1000 for runner on first and no outs): ")
+    success_prob = float(input("Enter the probability of success of the steal (between 0 and 1): "))
+    matrix_dict = create_matrix()
+    result = calculate_steal_expected_value(base_state, success_prob, matrix_dict)
+    print (result)
+    
+display_result()

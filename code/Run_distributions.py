@@ -1,48 +1,14 @@
 
 import os
+import matplotlib.pyplot as plt
+from primary_functions import get_innings,runcounter
 
 
 
-def get_innings(filename):
-    f = open(filename, 'r')
-    lines = f.readlines()
-    plays = []
-    for l in lines:
-        if l[:4] == 'play':
-            if 'NP' not in l[-3:]:
-                currentline = l.split(',')
-                currentline[6] = currentline[6][:-1]
-                plays.append(currentline)
-    innings = []
-    inning = []
-    for i in range(len(plays)):
-        if i == 0:
-            current_inning = '1'
-            current_half = '0'
-        else:
-            current_inning = plays[i-1][1]
-            current_half = plays[i-1][2]
-        if plays[i][1] == current_inning and plays[i][2] == current_half:
-            inning.append(plays[i])
-        else:
-            innings.append(inning)
-            inning = []
-            inning.append(plays[i])
-    return innings
     
 
 
-def runcounter(inning):
-    totalruns = 0
-    for play in inning:
-        info = play[6]
-        totalruns+=info.count("-H")
-        if "HR" in info:
-            totalruns+=1
-    return totalruns
-
-
-def get_ob_states(inning,totalruns,matrix_dict):
+def get_ob_states(inning,totalruns,matrix_dict_new):
     bases = [0, 0, 0]
     runs = 0
     outs = 0
@@ -131,53 +97,97 @@ def get_ob_states(inning,totalruns,matrix_dict):
         #print(play_key)
         #print([bases, totalruns-runs, outs])
 
-     
+    
         try:
-            matrix_dict[play_key][0]+=1
-            matrix_dict[play_key][1]+=totalruns-runs
+            if totalruns-runs in matrix_dict_new[play_key]:
+                matrix_dict_new[play_key][totalruns-runs] +=1
+            else:
+                matrix_dict_new[play_key][totalruns-runs] = 1
 
         except:
             continue
-        matrix_dict[play_key][1]+=totalruns-runs
-            
-if __name__ == "__main__":
-    print("Start")    
-    matrix_dict = {
-        '0000':[0,0],
-        '0001': [0, 0],
-        '0002': [0, 0],
-        '0010': [0, 0],
-        '0011': [0, 0],
-        '0012': [0, 0],
-        '0100': [0, 0],
-        '0101': [0, 0],
-        '0102': [0, 0],
-        '1000': [0, 0],
-        '1001': [0, 0],
-        '1002': [0, 0],
-        '0110': [0, 0],
-        '0111': [0, 0],
-        '0112': [0, 0],
-        '1010': [0, 0],
-        '1011': [0, 0],
-        '1012': [0, 0],
-        '1100': [0, 0],
-        '1101': [0, 0],
-        '1102': [0, 0],
-        '1110': [0, 0],
-        '1111': [0, 0],
-        '1112': [0, 0],
+
+
+
+def propcounter(freq_dict,needed_runs):
+    ret = {}
+    for base_state in freq_dict:
+        total = sum(freq_dict[base_state].values())
+        less = 0
+        current_dict = freq_dict[base_state]
+        for runs in current_dict:
+            if runs<needed_runs:
+                less+=current_dict[runs]
+        ret[base_state] = 1-less/total
+    return ret
+
+
+
+
+#creates dictionary mapping each base state to its distribution of runs scored
+#show_plots lets user control whether they want to see histograms for each base state
+def distribution_dict(show_plots = False):
+    matrix_dict_new = {
+        '0000':{},
+        '0001': {},
+        '0002': {},
+        '1000': {},
+        '1001': {},
+        '1002': {},
+        '0100': {},
+        '0101': {},
+        '0102': {},
+        '1100': {},
+        '1101': {},
+        '1102': {},
+        '0010': {},
+        '0011': {},
+        '0012': {},
+        '1010': {},
+        '1011': {},
+        '1012': {},
+        '0110': {},
+        '0111': {},
+        '0112': {},
+        '1110': {},
+        '1111': {},
+        '1112': {},
     }
-    for filename in os.listdir("events"):
-        
-        path = "events/" + filename
+    
+    for filename in os.listdir("Event-Data"):
+        path = "Event-Data/" + filename
         innings = get_innings(path)
+        get_innings(path)
         for inning in innings:
             try:
-                get_ob_states(inning,runcounter(inning),matrix_dict)
+                get_ob_states(inning,runcounter(inning),matrix_dict_new)
             except:
                 continue
-    print(matrix_dict)
-    print("end")
-    
-    
+    if (show_plots == True):
+        for string in matrix_dict_new.keys():
+            print("State:", string)
+            plt.bar(list(matrix_dict_new[string].keys()), matrix_dict_new[string].values(), color='g')
+            plt.show()
+    return matrix_dict_new
+
+
+
+#takes in dict of frequencies and number of runs needed,
+#returns dictionary mapping base state to probability that that number of runs can be attained
+def prop_dict(freq_dict,needed_runs):
+    ret = {}
+    for base_state in freq_dict:
+        total = sum(freq_dict[base_state].values())
+        less = 0
+        current_dict = freq_dict[base_state]
+        for runs in current_dict:
+            if runs<needed_runs:
+                less+=current_dict[runs]
+        ret[base_state] = 1-less/total
+    return ret
+
+
+
+
+
+print(prop_dict(distribution_dict(show_plots=False),2))

@@ -1,6 +1,6 @@
 
 import os
-
+import zipfile
 
 
 def get_innings(filename):
@@ -138,44 +138,42 @@ def get_ob_states(inning,totalruns,matrix_dict):
 
         except:
             continue
-            
-if __name__ == "__main__":
-    print("Start")    
+def create_matrix():
     matrix_dict = {
-        '0000':[0,0],
-        '0001': [0, 0],
-        '0002': [0, 0],
-        '1000': [0, 0],
-        '1001': [0, 0],
-        '1002': [0, 0],
-        '0100': [0, 0],
-        '0101': [0, 0],
-        '0102': [0, 0],
-        '1100': [0, 0],
-        '1101': [0, 0],
-        '1102': [0, 0],
-        '0010': [0, 0],
-        '0011': [0, 0],
-        '0012': [0, 0],
-        '1010': [0, 0],
-        '1011': [0, 0],
-        '1012': [0, 0],
-        '0110': [0, 0],
-        '0111': [0, 0],
-        '0112': [0, 0],
-        '1110': [0, 0],
-        '1111': [0, 0],
-        '1112': [0, 0],
-    }
-    for filename in os.listdir("events"):
+            '0000':[0,0],
+            '0001': [0, 0],
+            '0002': [0, 0],
+            '1000': [0, 0],
+            '1001': [0, 0],
+            '1002': [0, 0],
+            '0100': [0, 0],
+            '0101': [0, 0],
+            '0102': [0, 0],
+            '1100': [0, 0],
+            '1101': [0, 0],
+            '1102': [0, 0],
+            '0010': [0, 0],
+            '0011': [0, 0],
+            '0012': [0, 0],
+            '1010': [0, 0],
+            '1011': [0, 0],
+            '1012': [0, 0],
+            '0110': [0, 0],
+            '0111': [0, 0],
+            '0112': [0, 0],
+            '1110': [0, 0],
+            '1111': [0, 0],
+            '1112': [0, 0],
+        }
+    for filename in os.listdir("Event-Data"):
         
-        path = "events/" + filename
+        path = "Event-Data/" + filename
         innings = get_innings(path)
         for inning in innings:
             try:
                 get_ob_states(inning,runcounter(inning),matrix_dict)
             except:
                 continue
-    print(matrix_dict)
-    
-    
+
+    return matrix_dict
+
