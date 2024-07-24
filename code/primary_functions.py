@@ -165,9 +165,9 @@ def create_matrix():
             '1111': [0, 0],
             '1112': [0, 0],
         }
-    for filename in os.listdir("events"):
+    for filename in os.listdir("Event-Data"):
         
-        path = "events/" + filename
+        path = "Event-Data/" + filename
         innings = get_innings(path)
         for inning in innings:
             try:

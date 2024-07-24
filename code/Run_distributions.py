@@ -1,9 +1,7 @@
 
 import os
 import matplotlib.pyplot as plt
-import pandas as pd
-from primary_functions import get_innings
-from primary_functions import runcounter
+from primary_functions import get_innings,runcounter
 
 
 
@@ -156,8 +154,8 @@ def distribution_dict(show_plots = False):
         '1112': {},
     }
     
-    for filename in os.listdir("events"):
-        path = "events/" + filename
+    for filename in os.listdir("Event-Data"):
+        path = "Event-Data/" + filename
         innings = get_innings(path)
         get_innings(path)
         for inning in innings:
@@ -190,3 +188,6 @@ def prop_dict(freq_dict,needed_runs):
 
 
 
+
+
+print(prop_dict(distribution_dict(show_plots=False),2))

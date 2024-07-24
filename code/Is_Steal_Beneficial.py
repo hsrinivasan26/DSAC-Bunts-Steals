@@ -1,5 +1,3 @@
-```python
-
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -56,16 +54,19 @@ def calculate_steal_expected_value(base_state, success_prob, matrix_dict):
     original_runs = original_value[1]/original_value[0]
 
     expected_runs = success_runs*success_prob + failed_runs*(1-success_prob)
-    if expected_runs > original_runs:
-        return "This steal is beneficial", success_runs, failed_runs
-    else: return "This steal is not beneficial", success_runs, failed_runs
+    diff = expected_runs-original_runs
+
+    if diff>0:
+        return f"This steal is beneficial, you gain {diff} expected runs"
+    else: return f"This steal is not beneficial, you lost {-diff} expected runs"
 
     
 
 def display_result():
     base_state = input("Enter the current base state (e.g., 1000 for runner on first and no outs): ")
     success_prob = float(input("Enter the probability of success of the steal (between 0 and 1): "))
+    matrix_dict = create_matrix()
     result = calculate_steal_expected_value(base_state, success_prob, matrix_dict)
     print (result)
     
-```
+display_result()
