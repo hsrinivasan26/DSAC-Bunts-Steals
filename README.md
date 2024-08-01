@@ -1,7 +1,7 @@
 # Fun with the Baseball Run-Expectancy Matrix
 
 ## Description
-This project provides a variety of functions to construct and play with Run-Expectancy Matrices using box-scores from the past __ major league seasons. All the data comes from Retrosheet. Below is an overview of the different files in the code folder and the functionalities of each. To use, simply clone the repository. We hope that others interested in sabermetrics will enjoy exploring the game through these functions.
+This project provides a variety of functions to construct and play with Run-Expectancy Matrices using box-scores from the past 10 major league seasons. All the data comes from Retrosheet. Below is an overview of the different files in the code folder and the functionalities of each. To use, simply clone the repository. We hope that others interested in sabermetrics will enjoy exploring the game through these functions.
 
 ## Files
 
